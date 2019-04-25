@@ -1,0 +1,32 @@
+{
+    "name": "botik/bash.im-crawler",
+    "description": "bash.im crawler",
+    "type": "project",
+    "version": "0.0.0",
+    "license": "MIT",
+    "config": {
+        "platform": {
+            "php": "7.3"
+        },
+        "sort-packages": true,
+        "htaccess-protect": false
+    },
+    "authors": [
+        {
+            "name": "Botik",
+            "email": "botik213@gmail.com"
+        }
+    ],
+    "require": {
+        "symfony/dom-crawler": "^4.2",
+        "symfony/css-selector": "4.2.x-dev"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.14"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    }
+}
