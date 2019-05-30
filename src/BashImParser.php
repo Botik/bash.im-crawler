@@ -41,15 +41,17 @@ class BashImParser
     }
 
     /**
-     * @return Crawler
+     * @return \SplFixedArray
      */
     public function parseArticles()
     {
-        return $this->dom->filter('.quotes')->first();
-    }
+        $quotes = $this->dom->filter('.quotes')->children('.quote');
+        $articles = new \SplFixedArray(count($quotes));
 
-    public function parseArticle()
-    {
+        $quotes->each(function (Crawler $node, int $i) use ($articles) {
+            $articles[$i] = ArticleFactory::fromHCrawlerNode($node);
+        });
 
+        return $articles;
     }
 }
