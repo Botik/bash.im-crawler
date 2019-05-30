@@ -18,11 +18,11 @@
         }
     ],
     "require": {
-        "symfony/dom-crawler": "^4.2",
+        "symfony/dom-crawler": "^4.3",
         "symfony/css-selector": "4.2.x-dev"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.14"
+        "friendsofphp/php-cs-fixer": "^2.15"
     },
     "autoload": {
         "psr-4": {
