@@ -4,6 +4,7 @@ namespace App;
 
 require '../vendor/autoload.php';
 
-$parser = new BashImParser(file_get_contents('https://bash.im/'));
+$parser = new BashImParser\Parser();
+$parser->parseMainPage();
 
-echo $parser->parseArticleCount();
+echo 1;

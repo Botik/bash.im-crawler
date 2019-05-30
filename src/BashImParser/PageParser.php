@@ -1,15 +1,13 @@
 <?php
 
-namespace App;
+namespace App\BashImParser;
 
 use Symfony\Component\DomCrawler\Crawler;
 
-class BashImParser
+class PageParser
 {
     private $html;
     private $dom;
-
-    public $articleCount;
 
     /**
      * ArticleHmlParser constructor.
@@ -21,23 +19,28 @@ class BashImParser
         $this->dom = new Crawler($html);
     }
 
-    public function parse()
-    {
-        $this->parseArticleCount();
-    }
-
     /**
      * @return int
      */
     public function parseArticleCount()
     {
-        return $this->articleCount = (int)$this->dom
+        return (int) $this->dom
             ->filter('.quote__body')
             ->first()
             ->children()
             ->first()
             ->filter('b')
             ->text();
+    }
+
+    /**
+     * @return int
+     */
+    public function parseCurrentPageId()
+    {
+        return (int) $this->dom
+            ->filter('.quotes')
+            ->attr('data-page');
     }
 
     /**
@@ -49,7 +52,7 @@ class BashImParser
         $articles = new \SplFixedArray(count($quotes));
 
         $quotes->each(function (Crawler $node, int $i) use ($articles) {
-            $articles[$i] = ArticleFactory::fromHCrawlerNode($node);
+            $articles[$i] = ArticleParser::fromHCrawlerNode($node);
         });
 
         return $articles;

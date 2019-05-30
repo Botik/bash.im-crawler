@@ -1,10 +1,10 @@
 <?php
 
-namespace App;
+namespace App\BashImParser;
 
 use Symfony\Component\DomCrawler\Crawler;
 
-class ArticleFactory
+class ArticleParser
 {
     static function fromHCrawlerNode(Crawler $node): Article
     {
