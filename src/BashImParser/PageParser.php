@@ -54,7 +54,7 @@ abstract class PageParser
     /**
      * @param Page $page
      *
-     * @return Article[]
+     * @return Quote[]
      */
     public static function parseArticles(Page $page): array
     {
@@ -63,7 +63,7 @@ abstract class PageParser
         foreach ($page->dom->filter('.quotes')
             ->children('.quote')
             ->each(function (Crawler $node) {
-                return ArticleParser::fromHCrawlerNode($node);
+                return QuoteParser::fromHCrawlerNode($node);
             }) as $v) {
             $articles[$v->id] = $v;
         }

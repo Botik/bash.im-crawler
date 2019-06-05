@@ -4,11 +4,11 @@ namespace App\BashImParser;
 
 use Symfony\Component\DomCrawler\Crawler;
 
-abstract class ArticleParser
+abstract class QuoteParser
 {
-    public static function fromHCrawlerNode(Crawler $node): Article
+    public static function fromHCrawlerNode(Crawler $node): Quote
     {
-        $article = new Article();
+        $article = new Quote();
 
         $article->id = (int) $node->attr('data-quote');
         $node->filter('.quote__body')->children('div')->each(function (Crawler $node) {

@@ -2,7 +2,7 @@
 
 namespace App\BashImParser;
 
-class Article
+class Quote
 {
     /**
      * @var int

@@ -43,7 +43,7 @@ class Parser
      */
     public function parseMainPage(): Page
     {
-        $respose = $this->client->request('GET', 'https://bash.im/');
+        $respose = $this->client->request('GET', self::URL);
         $page = PageParser::fromHtml($respose->getContent());
         $this->articleCount = PageParser::parseArticleCount($page);
         $this->lastPageId = $page->id;
@@ -64,8 +64,8 @@ class Parser
      */
     public function parseNumPage(int $id): Page
     {
-        $respose = $this->client->request('GET', 'https://bash.im/index/'.$id);
-        $page = PageParser::fromHtml($respose->getContent());
+        $response = $this->client->request('GET', self::URL.'index/'.$id);
+        $page = PageParser::fromHtml($response->getContent());
         $page->dom = null;
 
         return $this->pages[$page->id] = $page;

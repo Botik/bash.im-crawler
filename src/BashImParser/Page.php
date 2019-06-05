@@ -17,7 +17,7 @@ class Page
     public $dom;
 
     /**
-     * @var Article[]
+     * @var Quote[]
      */
     public $articles = [];
 }
