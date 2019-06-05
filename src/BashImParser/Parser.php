@@ -70,4 +70,23 @@ class Parser
 
         return $this->pages[$page->id] = $page;
     }
+
+    /**
+     * @param int $id
+     *
+     * @return Quote
+     *
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
+    public function parseQuotePage(int $id): Quote
+    {
+        $response = $this->client->request('GET', self::URL.'quote/'.$id);
+        $page = PageParser::fromHtml($response->getContent());
+        $page->dom = null;
+
+        return current($page->articles);
+    }
 }
