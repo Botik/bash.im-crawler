@@ -2,6 +2,8 @@
 
 namespace App\BashImParser;
 
+use Symfony\Component\HttpClient\CurlHttpClient;
+
 class Parser
 {
     const URL = 'https://bash.im/';
@@ -9,23 +11,63 @@ class Parser
     /**
      * @var int
      */
-    private $articleCount;
+    public $articleCount;
 
     /**
      * @var int
      */
-    private $lastPageId;
+    public $lastPageId;
 
     /**
-     * @var Article[]
+     * @var Page[]
      */
-    private $articles = [];
+    public $pages = [];
 
-    public function parseMainPage()
+    /**
+     * @var CurlHttpClient
+     */
+    private $client;
+
+    public function __construct()
     {
-        $page = new PageParser(file_get_contents('https://bash.im/'));
-        $this->articleCount = $page->parseArticleCount();
-        $this->lastPageId = $page->parseCurrentPageId();
-        array_merge($this->articles, $page->parseArticles());
+        $this->client = new CurlHttpClient(['verify_peer' => false]);
+    }
+
+    /**
+     * @return Page
+     *
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
+    public function parseMainPage(): Page
+    {
+        $respose = $this->client->request('GET', 'https://bash.im/');
+        $page = PageParser::fromHtml($respose->getContent());
+        $this->articleCount = PageParser::parseArticleCount($page);
+        $this->lastPageId = $page->id;
+        $page->dom = null;
+
+        return $this->pages[$page->id] = $page;
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return Page
+     *
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
+    public function parseNumPage(int $id): Page
+    {
+        $respose = $this->client->request('GET', 'https://bash.im/index/'.$id);
+        $page = PageParser::fromHtml($respose->getContent());
+        $page->dom = null;
+
+        return $this->pages[$page->id] = $page;
     }
 }

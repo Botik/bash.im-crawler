@@ -4,27 +4,31 @@ namespace App\BashImParser;
 
 use Symfony\Component\DomCrawler\Crawler;
 
-class PageParser
+abstract class PageParser
 {
-    private $html;
-    private $dom;
-
     /**
-     * ArticleHmlParser constructor.
      * @param string $html
+     *
+     * @return Page
      */
-    public function __construct(string $html)
+    public static function fromHtml(string $html): Page
     {
-        $this->html = $html;
-        $this->dom = new Crawler($html);
+        $page = new Page();
+        $page->dom = new Crawler($html);
+        self::parseCurrentPageId($page);
+        self::parseArticles($page);
+
+        return $page;
     }
 
     /**
+     * @param Page $page
+     *
      * @return int
      */
-    public function parseArticleCount()
+    public static function parseArticleCount(Page $page): int
     {
-        return (int) $this->dom
+        return (int) $page->dom
             ->filter('.quote__body')
             ->first()
             ->children()
@@ -34,27 +38,36 @@ class PageParser
     }
 
     /**
+     * @param Page $page
+     *
      * @return int
      */
-    public function parseCurrentPageId()
+    public static function parseCurrentPageId(Page $page): int
     {
-        return (int) $this->dom
+        $page->id = (int) $page->dom
             ->filter('.quotes')
             ->attr('data-page');
+
+        return $page->id;
     }
 
     /**
-     * @return \SplFixedArray
+     * @param Page $page
+     *
+     * @return Article[]
      */
-    public function parseArticles()
+    public static function parseArticles(Page $page): array
     {
-        $quotes = $this->dom->filter('.quotes')->children('.quote');
-        $articles = new \SplFixedArray(count($quotes));
+        $articles = [];
 
-        $quotes->each(function (Crawler $node, int $i) use ($articles) {
-            $articles[$i] = ArticleParser::fromHCrawlerNode($node);
-        });
+        foreach ($page->dom->filter('.quotes')
+            ->children('.quote')
+            ->each(function (Crawler $node) {
+                return ArticleParser::fromHCrawlerNode($node);
+            }) as $v) {
+            $articles[$v->id] = $v;
+        }
 
-        return $articles;
+        return $page->articles = $articles;
     }
 }
